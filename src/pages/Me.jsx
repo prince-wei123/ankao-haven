@@ -68,8 +68,8 @@ export function Me() {
                   <div
                     className="stamp w-6 h-6 text-[10px]"
                     style={{
-                      color: CHARACTERS[f.charId || f.char]?.accent || '#c17b5c',
-                      borderColor: CHARACTERS[f.charId || f.char]?.accent || '#c17b5c'
+                      color: CHARACTERS[f.charId || f.char]?.accent || '#d1738f',
+                      borderColor: CHARACTERS[f.charId || f.char]?.accent || '#d1738f'
                     }}
                   >
                     {CHARACTERS[f.charId || f.char]?.stamp || '?'}

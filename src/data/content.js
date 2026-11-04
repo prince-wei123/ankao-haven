@@ -3,7 +3,7 @@ export const CHARACTERS = {
   taylor: {
     id: 'taylor', stamp: 'T',
     name: '泰勒·斯威夫特', en: 'Taylor Swift',
-    role: '叙事重塑者', accent: '#c17b5c', soft: '#f5e4d9',
+    role: '叙事重塑者', accent: '#d1738f', soft: '#fbe4ea',
     tagline: '把烂事写进歌里，再唱回来',
     short: '她不是来给你打气的。她来教你把这次失败写成下一个桥段。',
     bio: '十三岁开始写歌，十五岁被公司要求改写所有歌词，她走了。后来她每一张专辑都在重录自己的版本。她相信每一段低谷都是第二段主歌。',

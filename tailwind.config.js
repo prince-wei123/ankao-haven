@@ -4,22 +4,22 @@ export default {
   theme: {
     extend: {
       colors: {
-        paper: '#faf6f1',
-        paper2: '#f3ede3',
-        paper3: '#e6ddcd',
-        ink: '#2a241e',
-        ink2: '#5a4f42',
-        ink3: '#8d8274',
+        paper: '#fdf2f5',
+        paper2: '#f9e4eb',
+        paper3: '#f0cfda',
+        ink: '#2c2128',
+        ink2: '#5b4753',
+        ink3: '#917c87',
         accent: {
-          DEFAULT: '#c17b5c',
-          light: '#e8b49a',
-          dark: '#8f553c'
+          DEFAULT: '#d1738f',
+          light: '#f2b3c6',
+          dark: '#a04a66'
         },
-        gold: '#b5833d',
+        gold: '#c08a8f',
         sage: '#7a9e8a',
         lilac: '#8a7ba1',
         steel: '#5a6d82',
-        rose: '#a46868'
+        rose: '#b8607a'
       },
       fontFamily: {
         serif: ['"Noto Serif SC"', '"Playfair Display"', 'serif'],
@@ -28,10 +28,10 @@ export default {
         mono: ['"JetBrains Mono"', 'SFMono-Regular', 'Consolas', 'monospace']
       },
       boxShadow: {
-        soft: '0 2px 12px rgba(100, 70, 40, 0.06)',
-        card: '0 8px 32px rgba(100, 70, 40, 0.08)',
-        cardHover: '0 12px 40px rgba(100, 70, 40, 0.14)',
-        glow: '0 0 60px rgba(193, 123, 92, 0.18)'
+        soft: '0 2px 12px rgba(160, 74, 102, 0.06)',
+        card: '0 8px 32px rgba(160, 74, 102, 0.09)',
+        cardHover: '0 12px 40px rgba(160, 74, 102, 0.16)',
+        glow: '0 0 60px rgba(209, 115, 143, 0.20)'
       },
       animation: {
         'fade-up': 'fadeUp 0.6s ease-out',
