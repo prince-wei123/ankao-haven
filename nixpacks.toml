@@ -1,0 +1,3 @@
+# Railway 构建环境补充：better-sqlite3 需要在 Linux 上编译原生模块
+[phases.setup]
+aptPkgs = ["python3", "build-essential"]
