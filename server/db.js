@@ -4,6 +4,7 @@ const Database = require('better-sqlite3');
 
 const dbPath = process.env.DB_PATH || path.join(__dirname, 'haven.db');
 const db = new Database(dbPath);
+console.log('[db] ' + dbPath);
 
 db.pragma('journal_mode = WAL');
 db.pragma('foreign_keys = ON');

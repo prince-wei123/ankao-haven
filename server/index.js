@@ -12,7 +12,9 @@ app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: false }));
 
 // Health check
-app.get('/api/health', (req, res) => res.json({ ok: true, ts: Date.now() }));
+app.get('/api/health', (req, res) =>
+  res.json({ ok: true, ts: Date.now(), storage: process.env.DB_PATH ? 'volume' : 'local' })
+);
 
 // Mount routers
 app.use('/api/auth',     require('./routes/auth'));

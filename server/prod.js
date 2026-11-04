@@ -11,7 +11,9 @@ app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: false }));
 
 // --- API ---
-app.get('/api/health', (req, res) => res.json({ ok: true, ts: Date.now() }));
+app.get('/api/health', (req, res) =>
+  res.json({ ok: true, ts: Date.now(), storage: process.env.DB_PATH ? 'volume' : 'local' })
+);
 app.use('/api/auth',     require('./routes/auth'));
 app.use('/api/checkins', require('./routes/checkins'));
 app.use('/api/focus',    require('./routes/focus'));
