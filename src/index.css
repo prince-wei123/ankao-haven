@@ -92,4 +92,10 @@
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
   }
+  /* 环境音开关的音柱动画 */
+  @keyframes eqPulse {
+    0%, 100% { height: 4px; opacity: 0.55; }
+    50%      { height: 12px; opacity: 1; }
+  }
+  .eq-bar { height: 4px; animation: eqPulse 0.9s ease-in-out infinite; }
 }

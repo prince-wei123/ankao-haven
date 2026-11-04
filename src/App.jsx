@@ -8,6 +8,7 @@ import { Studio } from './pages/Studio';
 import { Ritual } from './pages/Ritual';
 import { Circle } from './pages/Circle';
 import { Me } from './pages/Me';
+import { AmbientMusic } from './components/AmbientMusic';
 import { useStore } from './store';
 
 const NAV = [
@@ -96,7 +97,18 @@ export default function App() {
       <footer className="border-t border-paper3/60 py-8 text-center text-xs text-ink3">
         <p className="font-display italic">She'll remember this winter.</p>
         <p className="mt-1 tracking-widest">岸上见 · 备考避难所 · v2.0</p>
+        <a
+          href="https://www.youtube.com/results?search_query=Mariah+Carey+Through+the+Rain"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-block mt-2 text-[11px] text-ink3/80 underline decoration-paper3 underline-offset-4 hover:text-accent transition-colors"
+        >
+          想听原曲：Mariah Carey《Through the Rain》↗
+        </a>
       </footer>
+
+      {/* 环境音开关 */}
+      <AmbientMusic />
 
       {/* Toast */}
       {toast && (
