@@ -1,0 +1,33 @@
+{
+  "name": "ankao-haven",
+  "private": true,
+  "version": "2.0.0",
+  "description": "考研避难所 · 岸上见 — A warm shelter for the exam season",
+  "scripts": {
+    "dev": "concurrently -k -n API,WEB -c yellow,cyan \"npm:dev:api\" \"npm:dev:web\"",
+    "dev:api": "cd server && npm run dev",
+    "dev:web": "vite",
+    "build": "vite build",
+    "start": "cd server && node prod.js",
+    "preview": "vite preview"
+  },
+  "engines": {
+    "node": ">=20 <27"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.1",
+    "autoprefixer": "^10.4.19",
+    "concurrently": "^8.2.2",
+    "postcss": "^8.4.39",
+    "tailwindcss": "^3.4.6",
+    "vite": "^5.3.4"
+  },
+  "dependencies": {
+    "framer-motion": "^11.3.2",
+    "lucide-react": "^0.414.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.25.1",
+    "zustand": "^4.5.4"
+  }
+}

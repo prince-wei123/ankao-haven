@@ -1,0 +1,11 @@
+node_modules/
+dist/
+server/haven.db
+server/haven.db-journal
+server/haven.db-wal
+.DS_Store
+.env
+.env.local
+*.log
+.vscode/
+.idea/
