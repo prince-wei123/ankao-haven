@@ -8,7 +8,8 @@ const router = express.Router();
 // GET /api/wall — public
 router.get('/', ah(async (req, res) => {
   const { rows } = await query(
-    `SELECT wp.id, wp.content, wp.created_at, u.name AS nickname
+    `SELECT wp.id, wp.content, wp.created_at,
+            COALESCE(u.name, wp.nickname) AS nickname
      FROM wall_posts wp
      LEFT JOIN users u ON wp.user_id = u.id
      ORDER BY wp.created_at DESC LIMIT 50`

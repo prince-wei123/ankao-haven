@@ -14,9 +14,11 @@ function isConfigured() {
 function getPool() {
   if (!CONN) return null;
   if (pool) return pool;
+  // 云端（Neon 等）必须走 SSL；本机 Postgres 一般没开 SSL，所以要区分
+  const local = /localhost|127\.0\.0\.1/.test(CONN);
   pool = new Pool({
     connectionString: CONN,
-    ssl: { rejectUnauthorized: false },
+    ssl: local ? false : { rejectUnauthorized: false },
     max: 4,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 8000
