@@ -1,9 +1,14 @@
 // SQLite initialization — runs once on start
 const path = require('path');
+const fs = require('fs');
 const Database = require('better-sqlite3');
 
-const dbPath = process.env.DB_PATH || path.join(__dirname, 'haven.db');
+// 有持久卷（Railway 挂载在 /data）就写进卷里，否则退回容器内路径
+const DATA_DIR = '/data';
+const dbPath = process.env.DB_PATH
+  || (fs.existsSync(DATA_DIR) ? path.join(DATA_DIR, 'haven.db') : path.join(__dirname, 'haven.db'));
 const db = new Database(dbPath);
+db.dbPath = dbPath;
 console.log('[db] ' + dbPath);
 
 db.pragma('journal_mode = WAL');
