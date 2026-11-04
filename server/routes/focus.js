@@ -1,24 +1,29 @@
 const express = require('express');
-const db = require('../db');
+const { query } = require('../db');
 const { authRequired } = require('../middleware/auth');
+const { ah, todayStr } = require('../util');
 
 const router = express.Router();
 
 // GET /api/focus?days=7
-router.get('/', authRequired, (req, res) => {
+router.get('/', authRequired, ah(async (req, res) => {
   const days = Math.min(parseInt(req.query.days) || 30, 365);
-  const rows = db.prepare(
-    `SELECT date, COALESCE(SUM(minutes), 0) AS minutes
-     FROM focus WHERE user_id = ?
-     AND date >= date('now','localtime', ?)
-     GROUP BY date ORDER BY date DESC`
-  ).all(req.user.id, `-${days} days`);
+  const since = todayStr(new Date(Date.now() - days * 86400000));
 
-  const total = db.prepare(
-    'SELECT COALESCE(SUM(minutes), 0) AS m FROM focus WHERE user_id = ?'
-  ).get(req.user.id).m;
+  const { rows } = await query(
+    `SELECT date, COALESCE(SUM(minutes), 0)::int AS minutes
+     FROM focus WHERE user_id = $1
+     AND date >= $2
+     GROUP BY date ORDER BY date DESC`,
+    [req.user.id, since]
+  );
 
-  const today = fmt(new Date());
+  const total = (await query(
+    'SELECT COALESCE(SUM(minutes), 0)::int AS m FROM focus WHERE user_id = $1',
+    [req.user.id]
+  )).rows[0].m;
+
+  const today = todayStr();
   const todayMin = rows.find(r => r.date === today)?.minutes || 0;
 
   res.json({
@@ -26,29 +31,28 @@ router.get('/', authRequired, (req, res) => {
     total,
     today: todayMin
   });
-});
+}));
 
 // POST /api/focus — add focus record
-router.post('/', authRequired, (req, res) => {
+router.post('/', authRequired, ah(async (req, res) => {
   const { date, minutes, subject } = req.body || {};
-  const d = date || fmt(new Date());
+  const d = date || todayStr();
   const m = parseInt(minutes) || 0;
   if (m <= 0) return res.status(400).json({ error: 'invalid_minutes' });
 
-  const info = db.prepare(
-    'INSERT INTO focus (user_id, date, minutes, subject) VALUES (?, ?, ?, ?)'
-  ).run(req.user.id, d, m, subject || null);
+  const { rows } = await query(
+    'INSERT INTO focus (user_id, date, minutes, subject) VALUES ($1, $2, $3, $4) RETURNING id',
+    [req.user.id, d, m, subject || null]
+  );
 
-  res.json({ ok: true, id: info.lastInsertRowid });
-});
+  res.json({ ok: true, id: rows[0].id });
+}));
 
 // DELETE /api/focus/:id — remove a record
-router.delete('/:id', authRequired, (req, res) => {
-  const info = db.prepare('DELETE FROM focus WHERE id = ? AND user_id = ?')
-    .run(req.params.id, req.user.id);
-  res.json({ ok: true, changes: info.changes });
-});
-
-function fmt(d) { return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+router.delete('/:id', authRequired, ah(async (req, res) => {
+  const result = await query('DELETE FROM focus WHERE id = $1 AND user_id = $2',
+    [parseInt(req.params.id, 10), req.user.id]);
+  res.json({ ok: true, changes: result.rowCount });
+}));
 
 module.exports = router;

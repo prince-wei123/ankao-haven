@@ -1,22 +1,24 @@
 const express = require('express');
 const { nanoid } = require('nanoid');
-const db = require('../db');
+const { query } = require('../db');
+const { ah, todayStr } = require('../util');
 
 const router = express.Router();
 
 // POST /api/auth/anonymous — create anonymous user, return token
-router.post('/anonymous', (req, res) => {
+router.post('/anonymous', ah(async (req, res) => {
   const id = nanoid(10);
   const token = nanoid(24);
-  db.prepare('INSERT INTO users (id, token) VALUES (?, ?)').run(id, token);
+  await query('INSERT INTO users (id, token) VALUES ($1, $2)', [id, token]);
   res.json({ user: { id, token, name: null, exam_date: null }, firstVisit: todayStr() });
-});
+}));
 
 // GET /api/auth/me — verify token, return user profile
-router.get('/me', (req, res) => {
+router.get('/me', ah(async (req, res) => {
   const token = (req.headers.authorization || '').replace(/^Bearer\s+/i, '').trim();
   if (!token) return res.json({ user: null });
-  const row = db.prepare('SELECT * FROM users WHERE token = ?').get(token);
+  const { rows } = await query('SELECT * FROM users WHERE token = $1', [token]);
+  const row = rows[0];
   if (!row) return res.json({ user: null });
   res.json({
     user: {
@@ -28,11 +30,6 @@ router.get('/me', (req, res) => {
       lastVisit: row.last_visit
     }
   });
-});
-
-function todayStr() {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-}
+}));
 
 module.exports = router;
