@@ -14,7 +14,14 @@ app.use(express.urlencoded({ extended: false }));
 const db = require('./db');
 
 app.get('/api/health', (req, res) =>
-  res.json({ ok: true, ts: Date.now(), storage: db.dbPath.startsWith('/data') ? 'volume' : 'local' })
+  res.json({
+    ok: true,
+    ts: Date.now(),
+    storage: db.dbPath.startsWith('/data') ? 'volume' : 'local',
+    dbPath: db.dbPath,
+    dataDirExists: fs.existsSync('/data'),
+    commit: (process.env.RAILWAY_GIT_COMMIT_SHA || '').slice(0, 7)
+  })
 );
 app.use('/api/auth',     require('./routes/auth'));
 app.use('/api/checkins', require('./routes/checkins'));
