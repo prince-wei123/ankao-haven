@@ -204,7 +204,7 @@ export const ACHIEVEMENTS = [
 ];
 
 // ========== 默认考试日 ==========
-export const EXAM_DEFAULT = '2026-12-26';
+export const EXAM_DEFAULT = '2026-12-21';
 
 // ========== 出征令（考前一夜每个角色的嘱托） ==========
 export const EXPEDITION = {
