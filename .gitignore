@@ -1,6 +1,7 @@
 node_modules/
 dist/
 server/haven.db
+server/haven.db-shm
 server/haven.db-journal
 server/haven.db-wal
 .DS_Store
