@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { api, ensureAuth } from '../lib/api';
+import { todayKey } from '../lib/utils';
 
 // Central app store — Zustand
 export const useStore = create((set, get) => ({
@@ -65,7 +66,7 @@ export const useStore = create((set, get) => ({
 
   async refreshToday() {
     const r = await api.checkins.list(1);
-    const today = new Date().toISOString().slice(0, 10);
+    const today = todayKey();
     const t = (r.checkins || []).find(c => c.date === today);
     set({ todayCheckin: t || null });
   },
@@ -96,7 +97,7 @@ export const useStore = create((set, get) => ({
   },
 
   async postCheckin(moodId, charId, line, accepted = false) {
-    const today = new Date().toISOString().slice(0, 10);
+    const today = todayKey();
     await api.checkins.create({
       date: today, moodId, charId,
       lineEn: line?.en || '', lineCn: line?.cn || '',
@@ -127,14 +128,14 @@ export const useStore = create((set, get) => ({
   },
 
   async postFocus(minutes, subject) {
-    await api.focus.add({ date: new Date().toISOString().slice(0,10), minutes, subject });
+    await api.focus.add({ date: todayKey(), minutes, subject });
     await get().refreshFocus();
     await get().refreshStats();
     get().toast(`+${minutes} 分钟，记下了。`);
   },
 
   async saveTiny(items) {
-    await api.tiny.update({ date: new Date().toISOString().slice(0,10), items });
+    await api.tiny.update({ date: todayKey(), items });
     await get().refreshTiny();
   },
 
