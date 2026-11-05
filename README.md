@@ -47,13 +47,11 @@ npm run preview    # 预览构建产物：http://localhost:4173/ankao-haven/
 
 ## 部署到 GitHub Pages
 
-站点用 `gh-pages` 分支托管构建产物（分支里放的就是 `dist/` 的内容）。
+用 GitHub Actions 自动构建发布（`.github/workflows/deploy.yml`）。
 
-1. 仓库 Settings → Pages → Source 选 **Deploy from a branch**
-2. Branch 选 `gh-pages`，文件夹 `/ (root)` → Save
+1. 仓库 Settings → Pages → Source 选 **GitHub Actions**（只需设置一次）
+2. 之后每次 push 到 `main` 都会自动构建并发布
 3. 访问 `https://<用户名>.github.io/ankao-haven/`
-
-更新网站的步骤：`npm run build`，然后把 `dist/` 的内容推到 `gh-pages` 分支。
 
 ## 数据说明
 
