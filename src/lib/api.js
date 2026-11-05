@@ -1,39 +1,17 @@
-// API client — handles anonymous auth token in localStorage
-const TOKEN_KEY = 'ankao_token';
-const BASE = import.meta.env.VITE_API_BASE || '';
+// API 客户端 —— 现在跑在浏览器本地（localStorage），不再请求远程服务器
+// 接口的 method / path / 返回结构都沿用原来的 /api 约定，页面代码不用改。
+import { localRequest } from './localDb';
 
-function getToken() { return localStorage.getItem(TOKEN_KEY); }
-function setToken(t) { localStorage.setItem(TOKEN_KEY, t); }
-function clearToken() { localStorage.removeItem(TOKEN_KEY); }
+const TOKEN_KEY = 'ankao_token';
 
 async function request(method, path, body) {
-  const token = getToken();
-  const headers = { 'Content-Type': 'application/json' };
-  if (token) headers['Authorization'] = `Bearer ${token}`;
-
-  const res = await fetch(BASE + path, {
-    method, headers,
-    body: body ? JSON.stringify(body) : undefined
-  });
-  const json = await res.json().catch(() => ({ error: 'invalid_json' }));
-  if (!res.ok) throw new Error(json.error || `http_${res.status}`);
-  return json;
+  return localRequest(method, path, body);
 }
 
-// Ensure anonymous user exists (called once on app boot)
+// 首次启动时确保本地身份存在（token 只是兼容旧逻辑，实际数据都在 localStorage）
 export async function ensureAuth() {
-  let token = getToken();
-  if (token) {
-    try {
-      await request('GET', '/api/auth/me');
-      return token;
-    } catch (_) {
-      clearToken();
-      token = null;
-    }
-  }
   const { user } = await request('POST', '/api/auth/anonymous');
-  setToken(user.token);
+  localStorage.setItem(TOKEN_KEY, user.token);
   return user.token;
 }
 

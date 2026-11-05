@@ -1,22 +1,17 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-// Vite dev server. In production, Vercel handles the build statically
-// and the Express server is replaced by Vercel Serverless Functions (see vercel.json).
-export default defineConfig({
+// 部署到 GitHub Pages：仓库地址 https://prince-wei123.github.io/ankao-haven/
+// 所以生产构建要用子路径 /ankao-haven/，本地开发仍然用根路径。
+export default defineConfig(({ mode }) => ({
+  base: mode === 'production' ? '/ankao-haven/' : '/',
   plugins: [react()],
   server: {
     port: 5173,
-    host: '0.0.0.0',
-    proxy: {
-      '/api': {
-        target: 'http://localhost:3001',
-        changeOrigin: true
-      }
-    }
+    host: '0.0.0.0'
   },
   build: {
     outDir: 'dist',
     sourcemap: false
   }
-});
+}));

@@ -14,6 +14,7 @@ export function Home() {
   const postCheckin = useStore(s => s.postCheckin);
   const acceptToday = useStore(s => s.acceptToday);
 
+  const loading = useStore(s => s.loading);
   const [moodOpen, setMoodOpen] = useState(false);
   const [dayQuote, setDayQuote] = useState(null);
   const [chapterLine, setChapterLine] = useState(null);
@@ -38,6 +39,12 @@ export function Home() {
     const line = pickBy(lines, hashStr(key + 'chapter'));
     setChapterLine(line);
   }, [profile.examDate]);
+
+  // 回来时如果今天已经签过到，直接把结果卡重新亮出来（数据在本地，不会丢）
+  useEffect(() => {
+    if (!loading && todayCheckin) setMoodOpen(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading]);
 
   const handleMood = async (moodId) => {
     const mood = MOODS.find(m => m.id === moodId);

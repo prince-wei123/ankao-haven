@@ -135,7 +135,7 @@ export function Me() {
         <h2 className="font-display text-xl mb-4">设置</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
-            <label className="text-xs text-ink3 block mb-1">你的名字（研友墙显示）</label>
+            <label className="text-xs text-ink3 block mb-1">你的名字（研友圈发帖时显示）</label>
             <input className="input" value={name} onChange={e => setName(e.target.value)} placeholder="可不填" />
           </div>
           <div>
@@ -152,7 +152,7 @@ export function Me() {
 
         <div className="mt-6 pt-4 border-t border-paper3/60">
           <div className="text-xs text-ink3 tracking-widest uppercase mb-3">分享</div>
-          <p className="text-xs text-ink2 mb-3">把你的链接发给朋友，她会看到和你一样的页面。每个人有独立的数据空间，研友墙是公开的。</p>
+          <p className="text-xs text-ink2 mb-3">把你的链接发给朋友，她打开就是同一个页面。所有记录（签到、专注、信、胶囊）都存在你这台设备的浏览器里，不会上传，换设备或清缓存需要重新开始。</p>
           <button
             className="btn-ghost btn-sm"
             onClick={() => {
