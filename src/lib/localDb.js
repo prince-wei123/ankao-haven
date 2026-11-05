@@ -23,7 +23,8 @@ function stamp(d = new Date()) {
 function emptyDb() {
   return {
     seq: 0, user: null,
-    checkins: [], focus: [], favs: [], letters: [], capsules: [], wall: [], tiny: {}
+    checkins: [], focus: [], favs: [], letters: [], capsules: [], wall: [], tiny: {},
+    plan: null
   };
 }
 
@@ -374,5 +375,46 @@ export async function localRequest(method, path, body = {}) {
     return { ok: true, date, cheered };
   }
 
+  // --- 周计划 ---
+  if (pathname === '/api/plan' && m === 'GET') {
+    return { plan: db.plan || null };
+  }
+
+  if (pathname === '/api/plan' && m === 'PUT') {
+    const subjects = Array.isArray(body.subjects) ? body.subjects.slice(0, 6) : [];
+    const matrix = body.matrix && typeof body.matrix === 'object' ? body.matrix : {};
+    db.plan = {
+      subjects, matrix,
+      hours: Math.max(0, Math.min(parseInt(body.hours, 10) || 0, 200)),
+      savedAt: stamp()
+    };
+    save(db);
+    return { ok: true, plan: db.plan };
+  }
+
   throw new Error('not_found');
+}
+
+// --- 备份：把整份本地数据导出成 JSON，或从 JSON 恢复 ---
+export function exportDb() {
+  const db = load();
+  return JSON.stringify({ version: 1, exportedAt: stamp(), db }, null, 2);
+}
+
+export function importDb(text) {
+  let parsed;
+  try { parsed = JSON.parse(text); } catch (_) { throw new Error('bad_json'); }
+  const data = parsed && parsed.db ? parsed.db : parsed;
+  if (!data || typeof data !== 'object' || !Array.isArray(data.checkins)) throw new Error('bad_format');
+  const merged = { ...emptyDb(), ...data };
+  save(merged);
+  return {
+    checkins: merged.checkins.length,
+    focus: merged.focus.length,
+    favs: merged.favs.length,
+    letters: merged.letters.length,
+    capsules: merged.capsules.length,
+    wall: merged.wall.length,
+    plan: merged.plan ? 1 : 0
+  };
 }

@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { CHARACTERS, ACHIEVEMENTS, EXAM_DEFAULT } from '../data/content';
 import { useStore } from '../store';
+import { exportDb, importDb } from '../lib/localDb';
 
 export function Me() {
   const profile = useStore(s => s.profile);
@@ -16,8 +17,38 @@ export function Me() {
 
   const [name, setName] = useState(profile.name || '');
   const [examDate, setExamDate] = useState(profile.examDate || EXAM_DEFAULT);
+  const fileRef = useRef(null);
 
   useEffect(() => { setName(profile.name || ''); setExamDate(profile.examDate || EXAM_DEFAULT); }, [profile]);
+
+  const handleExport = () => {
+    const blob = new Blob([exportDb()], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const d = new Date();
+    const day = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    a.href = url;
+    a.download = `岸上见备份-${day}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    toast('备份文件已保存到手机的下载目录。');
+  };
+
+  const handleImport = async (e) => {
+    const f = e.target.files && e.target.files[0];
+    e.target.value = '';
+    if (!f) return;
+    if (!window.confirm('导入会用备份覆盖这台设备上现有的记录，确定继续吗？')) return;
+    try {
+      const r = importDb(await f.text());
+      toast(`恢复好了：签到 ${r.checkins} 天、专注 ${r.focus} 条、金句 ${r.favs} 句。`);
+      setTimeout(() => window.location.reload(), 1200);
+    } catch (_) {
+      toast('这个文件读不出来，请选择从「导出备份」得到的 .json 文件。');
+    }
+  };
 
   return (
     <div className="container-wide pt-8">
@@ -149,6 +180,17 @@ export function Me() {
         >
           保存
         </button>
+
+        <div className="mt-6 pt-4 border-t border-paper3/60">
+          <div className="text-xs text-ink3 tracking-widest uppercase mb-3">数据备份</div>
+          <p className="text-xs text-ink2 mb-3">所有记录都在这台设备的浏览器里。换手机、换浏览器、清理缓存前，先导出一份备份；到了新设备上再导入，记录就回来了。</p>
+          <div className="flex flex-col sm:flex-row gap-2">
+            <button className="btn-primary btn-sm" onClick={handleExport}>导出备份</button>
+            <button className="btn-ghost btn-sm" onClick={() => fileRef.current?.click()}>导入备份</button>
+            <input ref={fileRef} type="file" accept="application/json,.json" className="hidden" onChange={handleImport} />
+          </div>
+          <p className="text-[10px] text-ink3 mt-2">备份文件是一份 .json，可以存在微信收藏、网盘或发给自己。</p>
+        </div>
 
         <div className="mt-6 pt-4 border-t border-paper3/60">
           <div className="text-xs text-ink3 tracking-widest uppercase mb-3">分享</div>

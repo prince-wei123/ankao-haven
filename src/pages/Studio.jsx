@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useStore } from '../store';
 import { todayKey } from '../lib/utils';
+import { api } from '../lib/api';
 
 const MODES = [
   { label: '专注 25', minutes: 25 },
@@ -281,7 +282,18 @@ function WeeklyPlan() {
   const [plan, setPlan] = useState(null);
 
   const SUBJECTS = ['数学', '英语', '政治', '专业课一', '专业课二'];
-  const DAYS = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+  const DAYS = ['一', '二', '三', '四', '五', '六', '日'];
+
+  useEffect(() => {
+    let alive = true;
+    api.plan.get().then(({ plan: p }) => {
+      if (!alive || !p) return;
+      if (Array.isArray(p.subjects) && p.subjects.length) setSubjects(p.subjects);
+      if (p.hours) setHours(p.hours);
+      if (p.matrix && Object.keys(p.matrix).length) setPlan(p.matrix);
+    }).catch(() => {});
+    return () => { alive = false; };
+  }, []);
 
   const toggle = (s) => {
     setSubjects(subjects.includes(s) ? subjects.filter(x => x !== s) : [...subjects, s]);
@@ -304,6 +316,7 @@ function WeeklyPlan() {
       });
     }
     setPlan(matrix);
+    api.plan.save({ subjects, hours, matrix }).catch(() => {});
   };
 
   return (
@@ -339,19 +352,19 @@ function WeeklyPlan() {
           animate={{ opacity: 1 }}
           className="overflow-x-auto"
         >
-          <table className="w-full text-xs">
+          <table className="w-full text-[11px] sm:text-xs">
             <thead>
               <tr className="text-ink3">
-                <th className="text-left py-2">科目</th>
-                {DAYS.map(d => <th key={d} className="py-2">{d}</th>)}
+                <th className="text-left py-1.5 pr-1">科目</th>
+                {DAYS.map(d => <th key={d} className="py-1.5">周{d}</th>)}
               </tr>
             </thead>
             <tbody>
               {Object.keys(plan).map(s => (
                 <tr key={s} className="border-t border-paper3/60">
-                  <td className="py-2 font-medium text-ink">{s}</td>
+                  <td className="py-1.5 pr-1 font-medium text-ink whitespace-nowrap">{s}</td>
                   {plan[s].map((h, i) => (
-                    <td key={i} className="py-2 text-center">
+                    <td key={i} className="py-1.5 text-center whitespace-nowrap">
                       {h ? `${h}h` : '—'}
                     </td>
                   ))}

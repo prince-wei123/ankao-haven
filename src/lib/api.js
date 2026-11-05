@@ -57,5 +57,9 @@ export const api = {
     get: (date) => request('GET', `/api/tiny${date ? `?date=${date}` : ''}`),
     update: (data) => request('PUT', '/api/tiny', data)
   },
-  health: () => request('GET', '/api/health')
+  health: () => request('GET', '/api/health'),
+  plan: {
+    get: () => request('GET', '/api/plan'),
+    save: (data) => request('PUT', '/api/plan', data)
+  }
 };
