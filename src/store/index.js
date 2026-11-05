@@ -98,9 +98,11 @@ export const useStore = create((set, get) => ({
 
   async postCheckin(moodId, charId, line, accepted = false) {
     const today = todayKey();
+    const isStr = typeof line === 'string';
     await api.checkins.create({
       date: today, moodId, charId,
-      lineEn: line?.en || '', lineCn: line?.cn || '',
+      lineEn: isStr ? '' : (line?.en || ''),
+      lineCn: isStr ? line : (line?.cn || ''),
       accepted: accepted ? 1 : 0
     });
     await get().refreshToday();

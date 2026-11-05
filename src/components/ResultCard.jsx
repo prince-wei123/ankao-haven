@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { CHARACTERS } from '../data/content';
 import { qMain, qSub } from '../lib/utils';
 
-export function ResultCard({ checkin, accepted, onAccept, onClose }) {
+export function ResultCard({ checkin, accepted, onAccept, onClose, onRefresh }) {
   const c = CHARACTERS[checkin.charId];
   const line = checkin.line;
 
@@ -44,13 +44,15 @@ export function ResultCard({ checkin, accepted, onAccept, onClose }) {
           </button>
         </div>
 
-        {line && (
+        {line && (line.en || line.cn) && (
           <div className="border-l-2 pl-4 my-4" style={{ borderColor: c.accent }}>
-            <p className="quote-en text-lg">
-              {typeof line === 'string' ? line : line.en}
-            </p>
-            {typeof line === 'object' && line.cn && (
-              <p className="quote-cn">{line.cn}</p>
+            {typeof line === 'string' ? (
+              <p className="quote-en text-lg">{line}</p>
+            ) : (
+              <>
+                {line.en && <p className="quote-en text-lg">{line.en}</p>}
+                {line.cn && <p className="quote-cn">{line.cn}</p>}
+              </>
             )}
           </div>
         )}
@@ -64,6 +66,11 @@ export function ResultCard({ checkin, accepted, onAccept, onClose }) {
             <span className="text-xs text-accent font-medium px-3 py-1.5 bg-accent/10 rounded-full">
               已收下 · 今天记了一次签到
             </span>
+          )}
+          {!accepted && onRefresh && (
+            <button onClick={onRefresh} className="btn-ghost">
+              换一句 ↻
+            </button>
           )}
           <Link
             to={`/char/${checkin.charId}`}

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { CHARACTERS, MOODS, LINES, DAILY_QUOTES, CHAPTER_LINES, eraFor, EXAM_DEFAULT } from '../data/content';
+import { CHARACTERS, MOODS, DAILY_QUOTES, CHAPTER_LINES, eraFor, EXAM_DEFAULT } from '../data/content';
 import { useStore } from '../store';
 import { todayKey, diffDays, pickBy, hashStr, qMain, qSub, cnWeekday } from '../lib/utils';
+import { nextLine } from '../lib/lines';
 import { MoodButton } from '../components/MoodButton';
 import { ResultCard } from '../components/ResultCard';
 
@@ -49,8 +50,7 @@ export function Home() {
   const handleMood = async (moodId) => {
     const mood = MOODS.find(m => m.id === moodId);
     if (!mood) return;
-    const charLines = LINES[mood.char]?.[moodId] || [''];
-    const line = charLines[Math.floor(Math.random() * charLines.length)];
+    const line = nextLine(mood.char, moodId);
     await postCheckin(moodId, mood.char, line, false);
     setMoodOpen(true);
   };
@@ -147,6 +147,7 @@ export function Home() {
               accepted={todayCheckin.accepted}
               onAccept={acceptToday}
               onClose={() => setMoodOpen(false)}
+              onRefresh={() => handleMood(todayCheckin.moodId)}
             />
           )}
         </AnimatePresence>
